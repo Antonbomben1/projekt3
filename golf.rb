@@ -18,13 +18,15 @@ BALL_RADIUS = 10
 HOLE_RADIUS = 15
 OBSTACLE_SIZE = 50
 DRAG_MULTIPLIER = 1.6 # Increase sensitivity further
-SHOT_SPEED = 5 # Adjust shot speed as needed
+MAX_SHOT_SPEED = 10 # Max shot speed
 DAMPING_FACTOR = 0.98 # Adjust damping factor to control slowdown rate
 STOP_THRESHOLD = 0.5 # Adjust threshold for stopping velocity
 
 # Create objects
 ball = Circle.new(x: 100, y: 350, radius: BALL_RADIUS, color: 'white')
 hole = Circle.new(x: 700, y: 300, radius: HOLE_RADIUS, color: 'black')
+bunker = Circle.new(x: 580, y: 250, radius: 20, color: 'yellow')
+bunker2 = Circle.new(x: 580, y: 270, radius: 20, color: 'yellow')
 obstacles = [
   Rectangle.new(x: 0, y: 0, width: 800, height: 10, color: 'brown'),
   Rectangle.new(x: 0, y: 0, width: 10, height: 600, color: 'brown'),
@@ -33,6 +35,7 @@ obstacles = [
   Rectangle.new(x: 300, y: 200, width: OBSTACLE_SIZE, height: OBSTACLE_SIZE, color: 'brown'),
   Rectangle.new(x: 500, y: 300, width: OBSTACLE_SIZE, height: OBSTACLE_SIZE, color: 'brown')
 ]
+
 # Track mouse position
 mouse_down = nil
 mouse_up = nil
@@ -50,8 +53,10 @@ def calculate_velocity(mouse_down, mouse_up)
   shot_dx = mouse_up[0] - mouse_down[0]
   shot_dy = mouse_up[1] - mouse_down[1]
   magnitude = Math.sqrt(shot_dx**2 + shot_dy**2)
-  velocity_factor = SHOT_SPEED / magnitude
-  [-shot_dx * velocity_factor, -shot_dy * velocity_factor] # Invert velocity
+  normalized_dx = shot_dx / magnitude
+  normalized_dy = shot_dy / magnitude
+  shot_speed = [magnitude / 10, MAX_SHOT_SPEED].min # Adjust sensitivity and max speed here
+  [-normalized_dx * shot_speed, -normalized_dy * shot_speed] # Invert velocity
 end
 
 # Check collision with obstacles
@@ -64,13 +69,15 @@ def collides_with_obstacle?(ball, obstacle)
   if distance_x > (obstacle.width / 2.0 + BALL_RADIUS)
     closest_x = obstacle.x + obstacle.width / 2.0
   else
-    closest_x = ball.x.clamp(obstacle.x, obstacle.x + obstacle.width)
+    closest_x = [ball.x, obstacle.x].max
+    closest_x = [closest_x, obstacle.x + obstacle.width].min
   end
 
   if distance_y > (obstacle.height / 2.0 + BALL_RADIUS)
     closest_y = obstacle.y + obstacle.height / 2.0
   else
-    closest_y = ball.y.clamp(obstacle.y, obstacle.y + obstacle.height)
+    closest_y = [ball.y, obstacle.y].max
+    closest_y = [closest_y, obstacle.y + obstacle.height].min
   end
 
   distance_x = ball.x - closest_x
@@ -127,6 +134,8 @@ update do
         reflection_y = shot_velocity[1] - 2 * dot_product * normal_y
         shot_velocity = [reflection_x, reflection_y]
       end
+
+      
     end
 
     if reached_hole?(ball, hole)
@@ -149,6 +158,7 @@ on :mouse_down do |event|
     mouse_down = [event.x, event.y]
   end
 end
+
 
 on :mouse_up do |event|
   if !ball_in_motion

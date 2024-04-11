@@ -21,10 +21,15 @@ DRAG_MULTIPLIER = 1.6 # Increase sensitivity further
 MAX_SHOT_SPEED = 10 # Max shot speed
 DAMPING_FACTOR = 0.98 # Adjust damping factor to control slowdown rate
 STOP_THRESHOLD = 0.5 # Adjust threshold for stopping velocity
+BUNKER_DAMPING_FACTOR = 0.7 # Adjust damping factor to control slowdown rate
 
 # Create objects
+bunker1 = Circle.new(x: 580, y: 250, radius: 20, color: 'yellow')
+bunker2 = Circle.new(x: 580, y: 270, radius: 20, color: 'yellow') 
+        
 ball = Circle.new(x: 100, y: 350, radius: BALL_RADIUS, color: 'white')
 hole = Circle.new(x: 700, y: 300, radius: HOLE_RADIUS, color: 'black')
+
 obstacles = [
   Rectangle.new(x: 0, y: 0, width: 800, height: 10, color: 'brown'),
   Rectangle.new(x: 0, y: 0, width: 10, height: 600, color: 'brown'),
@@ -91,6 +96,12 @@ def reached_hole?(ball, hole)
   distance <= BALL_RADIUS + HOLE_RADIUS
 end
 
+#check if ball is in bunker
+def in_bunker?(ball, bunker)
+  distance = Math.sqrt((ball.x - bunker.x) ** 2 + (ball.y - bunker.y) ** 2)
+  distance <= BALL_RADIUS + bunker.radius
+end
+
 # Calculate velocity magnitude
 def velocity_magnitude(velocity)
   Math.sqrt(velocity[0]**2 + velocity[1]**2)
@@ -117,6 +128,7 @@ update do
     ball.x += shot_velocity[0]
     ball.y += shot_velocity[1]
 
+
     obstacles.each do |obstacle|
       if collides_with_obstacle?(ball, obstacle)
         # Calculate reflection vector
@@ -132,6 +144,8 @@ update do
         reflection_y = shot_velocity[1] - 2 * dot_product * normal_y
         shot_velocity = [reflection_x, reflection_y]
       end
+      
+      
     end
 
     if reached_hole?(ball, hole)
@@ -140,6 +154,12 @@ update do
       reset_ball(ball)
       ball_in_motion = false
     end
+
+    if in_bunker?(ball, bunker1) || in_bunker?(ball, bunker2)
+    shot_velocity[0] *= BUNKER_DAMPING_FACTOR
+    shot_velocity[1] *= BUNKER_DAMPING_FACTOR
+    end
+
 
     if velocity_magnitude(shot_velocity) < STOP_THRESHOLD
       # Allow shooting again when the ball's velocity falls below the threshold
