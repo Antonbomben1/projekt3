@@ -1,4 +1,3 @@
-#fixa boom
 require 'ruby2d'
 # Set up the window
 set title: "Mini Golf Game"
@@ -9,7 +8,7 @@ set height: 600
 boom = Sprite.new(
   'boom.png',
   clip_width: 127,
-  x: 635, y: 230,
+  x: 635, y: 430,
   time: 75
 )
 
@@ -217,4 +216,3 @@ end
 
 
 
-show

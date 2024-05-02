@@ -1,3 +1,4 @@
+
 require 'ruby2d'
 # Set up the window
 set title: "Mini Golf Game"
@@ -148,10 +149,10 @@ update do
 
     
     if reached_hole?(ball, hole)
-      # Change background color to green when the ball reaches the hole
       boom.play 
       reset_ball(ball)
       ball_in_motion = false
+      shot_count = 0
     end
 
     if in_bunker?(ball, bunker1) || in_bunker?(ball, bunker2)
@@ -201,4 +202,3 @@ end
 
 
 
-show
