@@ -15,7 +15,7 @@ def hinder2
     hide2
   end
 
-boom = Sprite.new(
+$boom = Sprite.new(
   'boom.png',
   clip_width: 127,
   x: 635, y: 430,
