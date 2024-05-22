@@ -5,7 +5,7 @@ require 'ruby2d'
 $boom = Sprite.new(
   'boom.png',
   clip_width: 127,
-  x: 635, y: 230,
+  x: 635, y: 235,
   time: 75
   )
   
@@ -51,7 +51,8 @@ $obstacles = [
   Rectangle.new(x: 0, y: 590, width: 800, height: 10, color: 'brown'),
   Rectangle.new(x: 790, y: 0, width: 10, height: 600, color: 'brown'),
   Rectangle.new(x: 300, y: 200, width: OBSTACLE_SIZE, height: OBSTACLE_SIZE, color: 'brown'),
-  Rectangle.new(x: 500, y: 300, width: OBSTACLE_SIZE, height: OBSTACLE_SIZE, color: 'brown')
+  Rectangle.new(x: 500, y: 300, width: OBSTACLE_SIZE, height: OBSTACLE_SIZE, color: 'brown'),
+  Rectangle.new(x: 600, y: 400, width: OBSTACLE_SIZE, height: OBSTACLE_SIZE, color: 'brown')
 ]
 
 end
